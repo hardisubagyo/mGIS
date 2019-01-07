@@ -41,14 +41,11 @@ var lyrKab = null;
 $('#btn_cari_provinsi').on('click',function(){
 	clean_map();
 
-	/*var provinsi = $('#Provinsi').val();*/
 	$("#PencarianWilayah").modal('hide');
-		
-	myZoomHandler($('#Provinsi').val());
+	/*myZoomHandler($('#Provinsi').val());*/
+	getZoom($('#Provinsi').val());
 
 	map.on('zoomend', function(){
-
-		//alert(provinsi);
 		clean_map();
 		myZoomHandler($('#Provinsi').val());
 	});
@@ -105,6 +102,45 @@ function myZoomHandler(provinsi) {
     }
 }
 
+function getZoom(provinsi){
+	var defaultParameters = {
+        service : 'WFS',
+        version: '1.0.0',
+        request: 'GetFeature',
+        typeName : 'mx:INDONESIA_PROP',
+        outputFormat: 'text/javascript',
+        format_options : 'callback:getJson',
+		SrsName : 'EPSG:4326'
+    };
+    var parameters = L.Util.extend(defaultParameters);
+	var URL = geoJsonUrl + L.Util.getParamString(parameters) + '&CQL_FILTER=Propinsi=%27'+provinsi.toUpperCase()+'%27';
+	var ajax = $.ajax({
+		type: "GET",
+		url : URL,
+	    dataType : 'jsonp',
+	    jsonpCallback : 'getJson',
+		success	: function(response){
+			lyrProv = L.geoJson(response, {
+				style: function(features){
+					return{
+				        weight: 2,
+				        opacity: 1,
+				        color: 'white',
+				        fillOpacity: 0
+					};
+				},
+				 onEachFeature: function (features, layer) {
+	   				layer.on('click', function(){
+	   					var dataProv = new Array(features.properties.Propinsi, features.properties.SUMBER);
+	   					ShowData(dataProv);
+	   				})
+	            }
+			}).addTo(map);
+			map.fitBounds(lyrProv.getBounds()); 
+		}
+	});
+}
+
 function getColor(d){
 	return d < 20 ? '#800026' :
 			'#FFEDA0';
@@ -138,39 +174,18 @@ function mapProv(provinsi){
 				        fillOpacity: 0
 					};
 				},
-				onEachFeature: function (features, layer) {
-	                layer.bindPopup("<div class='mygrid-wrapper-div'>"+
-	                	"<table class='table'> "+ 
-	                	"<thead>"+
-	                		"<tr>"+
-	                			"<th scope='col'>ID</th>"+
-	                			"<th scope='col'>Kode</th>"+
-	                			"<th scope='col'>Provinsi</th>"+
-	                			"<th scope='col'>Sumber</th>"+
-	                		"</tr>"+
-	                	"</thead>"+
-	                	"<tbody>"+
-						    "<tr>"+
-						      "<th scope='row'>"+features.properties.ID+"</th>"+
-						      "<td>"+features.properties.kode+"</td>"+
-						      "<td>"+features.properties.Propinsi+"</td>"+
-						      "<td>"+features.properties.SUMBER+"</td>"+
-						    "</tr>"+
-						  "</tbody>"+
-	                	"</table></div>");
+				 onEachFeature: function (features, layer) {
+	   				layer.on('click', function(){
+	   					var dataProv = new Array(features.properties.Propinsi, features.properties.SUMBER);
+	   					ShowData(dataProv);
+	   				})
 	            }
 			}).addTo(map);
-			console.log(response);
 		}
 	});
-
 }
 
 function mapKab(provinsi){
-	/*map.eachLayer(function (layer) {
-	    map.removeLayer(layer)
-	}); 
-	basemap.addTo(map);*/
 	var paramKab = {
         service : 'WFS',
         version: '1.0.0',
@@ -190,11 +205,6 @@ function mapKab(provinsi){
 			lyrKab = L.geoJson(response, {
 				style: function(features){
 					return{
-						/*fillColor: 'blue',
-				        weight: 2,
-				        opacity: 1,
-				        color: 'white',
-				        fillOpacity: 0*/
 				        weight: 2,
 						opacity: 1,
 						color: 'white',
@@ -204,46 +214,48 @@ function mapKab(provinsi){
 					};
 				},
 				onEachFeature: function (features, layer) {
-	                layer.bindPopup("<div class='mygrid-wrapper-div'>"+
-	                	"<table class='table'> "+ 
-	                	"<thead>"+
-	                		"<tr>"+
-	                			"<th scope='col'>ID</th>"+
-	                			"<th scope='col'>Kode</th>"+
-	                			"<th scope='col'>Kabupaten</th>"+
-	                			"<th scope='col'>Ibukota</th>"+
-	                			"<th scope='col'>Provinsi</th>"+
-	                			"<th scope='col'>Bupati/Walikota</th>"+
-	                			"<th scope='col'>Wakil</th>"+
-	                			"<th scope='col'>Batas Utara</th>"+
-	                			"<th scope='col'>Batas Selatan</th>"+
-	                			"<th scope='col'>Batas Barat</th>"+
-	                			"<th scope='col'>Batas Timur</th>"+
-	                		"</tr>"+
-	                	"</thead>"+
-	                	"<tbody>"+
-						    "<tr>"+
-						      "<th scope='row'>"+features.properties.ID+"</th>"+
-						      "<td'>"+features.properties.kode+"</td>"+
-						      "<td>"+features.properties.Kabupaten_+"</td>"+
-						      "<td>"+features.properties.Ibukota+"</td>"+
-						      "<td>"+features.properties.Provinsi+"</td>"+
-						      "<td>"+features.properties.Bupati_Wal+"</td>"+
-						      "<td>"+features.properties.Wakil+"</td>"+
-						      "<td>"+features.properties.Batas_Utar+"</td>"+
-						      "<td>"+features.properties.Batas_Sela+"</td>"+
-						      "<td>"+features.properties.Batas_Bara+"</td>"+
-						      "<td>"+features.properties.Batas_Timu+"</td>"+
-						    "</tr>"+
-						  "</tbody>"+
-	                	"</table></div>");
+	                layer.on('click', function(){
+	                	var dataKab = new Array(
+	                		features.properties.Kabupaten_,
+	                		features.properties.Ibukota,
+	                		features.properties.Dsr_Hukum,
+	                		features.properties.Provinsi,
+	                		features.properties.Bupati_Wal,
+	                		features.properties.Wakil,
+	                		features.properties.Batas_Utar,
+	                		features.properties.Batas_Sela,
+	                		features.properties.Batas_Bara,
+	                		features.properties.Batas_Timu
+	                	);
+	                	ShowKabupaten(dataKab);
+	                })
 	            }
 			}).addTo(map);
-			console.log(response);
 		}
 	});
 }
 
+function ShowData(data){
+	$('#showDataProv').modal('show');
+
+	$('#ProvinsiData').html(data[0]);
+	$('#SumberData').html(data[1]);
+}
+
+function ShowKabupaten(data){
+	$('#showDataKab').modal('show');
+
+	$('#KabupatenKab').html(data[0]);
+	$('#IbukotaKab').html(data[1]);
+	$('#ProvinsiKab').html(data[3]);
+	$('#DasarhukumnKab').html(data[2]);
+	$('#BupatiWalKab').html(data[4]);
+	$('#WakilKab').html(data[5]);
+	$('#BatasutaraKab').html(data[6]);
+	$('#BatasbaratKab').html(data[8]);
+	$('#BatastimurKab').html(data[9]);
+	$('#BatasselatanKab').html(data[7]);
+}
 
 /*
 var legend = L.control({position: 'bottomright'});
