@@ -160,7 +160,116 @@
                 </div>
             </div>
           </div>
-          
+        </div>
+
+        <div class="modal fade" id="showDataProv" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Detail Data </h4>
+                    </div>
+                    
+                        <div class="modal-body">
+                            <form id="Wilayah">
+                                <div class="form-group">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Provinsi</th>
+                                                <th>Sumber Data</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td id="ProvinsiData"></td>
+                                                <td id="SumberData"></td>
+                                            </tr>
+                                    </table>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                        </div>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="showDataKab" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Detail Data </h4>
+                    </div>
+                    
+                        <div class="modal-body">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a data-toggle="tab" href="#home">Data 1</a></li>
+                                <li><a data-toggle="tab" href="#menu1">Data 1</a></li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div id="home" class="tab-pane fade in active">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">Kabupaten</th>
+                                                <td id="KabupatenKab"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Ibukota</th>
+                                                <td id="IbukotaKab"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Provinsi</th>
+                                                <td id="ProvinsiKab"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Dasar Hukum</th>
+                                                <td id="DasarhukumnKab"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Bupati/Walikota</th>
+                                                <td id="BupatiWalKab"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Wakil</th>
+                                                <td id="WakilKab"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Batas Utara</th>
+                                                <td id="BatasutaraKab"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Batas Barat</th>
+                                                <td id="BatasbaratKab"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Batas Timur</th>
+                                                <td id="BatastimurKab"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Batas Selatan</th>
+                                                <td id="BatasselatanKab"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="menu1" class="tab-pane fade">
+                                  <h3>Menu 1</h3>
+                                  <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                        </div>
+                </div>
+            </div>
+          </div>
         </div>
 
         <div class="modal" id="show_loading">
