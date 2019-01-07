@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>GIS</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
@@ -24,6 +24,9 @@
 
         <link rel="stylesheet" href="css/L.Control.Basemaps.css" />
         <script src="js/L.Control.Basemaps.js"></script>
+
+        <!-- Select2 -->
+        <link rel="stylesheet" href="select2/dist/css/select2.min.css">
 
         <!-- Styles -->
         <style>
@@ -74,6 +77,36 @@
             .legend { text-align: left; line-height: 18px; color: #555; } 
 
             .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+
+            .loader {
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              z-index: 1;
+              width: 150px;
+              height: 150px;
+              margin: -75px 0 0 -75px;
+              border: 16px solid #f3f3f3;
+              border-radius: 50%;
+              border-top: 16px solid #3498db;
+              width: 120px;
+              height: 120px;
+              -webkit-animation: spin 2s linear infinite;
+              animation: spin 2s linear infinite;
+            }
+
+            /* Safari */
+            @-webkit-keyframes spin {
+              0% { -webkit-transform: rotate(0deg); }
+              100% { -webkit-transform: rotate(360deg); }
+            }
+
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+
+
         </style>
     </head>
     <body>
@@ -101,12 +134,8 @@
                             <li>
                                 <a data-toggle="modal" data-target="#PencarianWilayah">Wilayah</a>
                             </li>
-
                         </ul>
-                    </li><!-- 
-                    <li>
-                        <a onclick="showBasemap()">Basemap</a>
-                    </li> -->
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -121,10 +150,21 @@
                   <h4 class="modal-title">Pencarian Berdasarkan Perusahaan</h4>
                 </div>
                 <div class="modal-body">
-                  <p>Some text in the modal.</p>
+                    <form id="CariPerusahaan">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Pilih Perusahaan</label>
+                            <select class="form-control select2" style="width: 100%"; id="Perusahaan">
+                                @foreach($perusahaan as $item)
+                                    <option value="{{ $item->id_perusahaan }}">{{ $item->nama }}</option>
+                                @endforeach
+                            </select>
+                            <!-- <input type="hidden" name="tipe" id="tipe" value="Perusahaan"> -->
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" onclick="cariPerusahaan()">Cari</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
               </div>
               
@@ -142,19 +182,20 @@
                     </div>
                     
                         <div class="modal-body">
-                            <form id="Wilayah">
+                            <form id="FrmWilayah">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Pilih Provinsi</label>
-                                    <select class="form-control" id="Provinsi">
-                                        @foreach($prop as $item)
-                                            <option value="{{ $item->propinsi }}">{{ $item->propinsi }}</option>
+                                    <select class="form-control select2" style="width: 100%"; id="Provinsi">
+                                        @foreach($provinsi as $item)
+                                            <option value="{{ $item->kode_provinsi }}">{{ $item->nama_provinsi }}</option>
                                         @endforeach
                                     </select>
+
                                 </div>
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary" id="btn_cari_provinsi">Cari</button>
+                            <button type="submit" class="btn btn-primary" onclick="cariWilayah()">Cari</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
                         </div>
                 </div>
@@ -176,14 +217,14 @@
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
+                                                <th>Region</th>
                                                 <th>Provinsi</th>
-                                                <th>Sumber Data</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td id="ProvinsiData"></td>
-                                                <td id="SumberData"></td>
+                                                <td id="Region"></td>
+                                                <td id="Provinsi-Prov"></td>
                                             </tr>
                                     </table>
                                 </div>
@@ -216,44 +257,12 @@
                                     <table class="table table-bordered">
                                         <tbody>
                                             <tr>
-                                                <th scope="row">Kabupaten</th>
-                                                <td id="KabupatenKab"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Ibukota</th>
-                                                <td id="IbukotaKab"></td>
-                                            </tr>
-                                            <tr>
                                                 <th scope="row">Provinsi</th>
-                                                <td id="ProvinsiKab"></td>
+                                                <td id="Provinsi-kab"></td>
                                             </tr>
                                             <tr>
-                                                <th scope="row">Dasar Hukum</th>
-                                                <td id="DasarhukumnKab"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Bupati/Walikota</th>
-                                                <td id="BupatiWalKab"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Wakil</th>
-                                                <td id="WakilKab"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Batas Utara</th>
-                                                <td id="BatasutaraKab"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Batas Barat</th>
-                                                <td id="BatasbaratKab"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Batas Timur</th>
-                                                <td id="BatastimurKab"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Batas Selatan</th>
-                                                <td id="BatasselatanKab"></td>
+                                                <th scope="row">Kabupaten/Kota</th>
+                                                <td id="KabKota"></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -272,9 +281,64 @@
           </div>
         </div>
 
-        <div class="modal" id="show_loading">
-          <div class="loader"></div>
+        <div class="modal fade" id="DataDetail" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Detail Data </h4>
+                    </div>
+                    
+                        <div class="modal-body">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a data-toggle="tab" href="#DataPerusahaan">Data Perusahaan</a></li>
+                                <li><a data-toggle="tab" href="#DataKabupaten">Data Kabupaten</a></li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div id="DataPerusahaan" class="tab-pane fade in active">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">Nama Perusahaan</th>
+                                                <td id="NamaPerusahaan"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Alamat</th>
+                                                <td id="Alamat"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">No Telp</th>
+                                                <td id="NoTelp"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="DataKabupaten" class="tab-pane fade">
+                                  <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">Nama Kabupaten</th>
+                                                <td id="NamaKabupaten"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                        </div>
+                </div>
+            </div>
+          </div>
         </div>
+
+        <div class="modal" id="Loading">
+            <div class="loader"></div>
+        </div>
+
+        
 
         <div id="map-canvas" ></div>
 
@@ -284,9 +348,17 @@
         <script src="ext/customScroll/js/jquery.mousewheel.min.js"></script>
         <script src="js/application.js"></script>
 
+        <script src="select2/dist/js/select2.full.min.js"></script>
+
         <!-- <script src="js/Leaflet.Control.Custom.js"></script> -->
         
         <script src="js/map.js"></script>
+
+        <script>
+            $(function () {
+                $('.select2').select2()
+            });
+        </script>
         
     </body>
 </html>

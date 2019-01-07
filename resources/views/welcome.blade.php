@@ -24,6 +24,7 @@
 
         <link rel="stylesheet" href="css/L.Control.Basemaps.css" />
         <script src="js/L.Control.Basemaps.js"></script>
+        <script src="js/mandailingnatal.js"></script>
 
         <!-- Styles -->
         <style>
@@ -74,6 +75,15 @@
             .legend { text-align: left; line-height: 18px; color: #555; } 
 
             .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+
+            .countryLabel{
+                background: rgba(255, 255, 255, 0);
+                border:0;
+                border-radius:0px;
+                box-shadow: 0 0px 0px;
+                font-size: 8px;
+                color : #fff;
+            }
         </style>
     </head>
     <body>
@@ -177,7 +187,7 @@
 
         <!-- <script src="js/Leaflet.Control.Custom.js"></script> -->
         
-        <script src="js/map.js"></script>
+        <script src="js/mapMandailing.js"></script>
         
     </body>
 </html>

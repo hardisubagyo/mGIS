@@ -19,4 +19,11 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+
+// GIS
 Route::get('/gis', 'GisController@index');
+Route::get('getKabupaten','GisController@getKodeKabupaten');
+Route::get('getDataDetail','GisController@getDataDetail');
+
+
+Route::get('/passport', 'PassportController@index');
